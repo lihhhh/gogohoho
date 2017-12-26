@@ -1,0 +1,96 @@
+<div ng-keydown="keyDown($event)">
+	<div class="condition">
+		<label class="text-right lbl" for='start-city'>出发城市</label><input ng-model='model.start_city' id='start-city' type="text" placeholder="出发地">
+		<label class="text-right lbl" for='end-city'>到达城市</label><input ng-model='model.end_city' id='end-city' type="text" placeholder="目的地">
+		<label class="text-right lbl" for='end-city'>出发日期</label><input ng-model='model.start_date' id='end-city' type="text" placeholder="出发日期">
+		<button class="btn btn-defult btn-mg" ng-click='search()' ng-bind="btnMg"></button>
+
+		<button class="btn btn-go" ng-click='goSocket()'>开始抢票</button>
+	</div>
+	<div style="padding:20px">
+		<span class="glyphicon glyphicon-plus"></span><span style="padding-left:10px;padding-right: 20px">添加乘客</span>
+		<span ng-repeat='passenger in passengers' style="padding-right: 10px">
+			<input type="checkbox" class="check" name=""><span ng-bind='passenger.passenger_name'></span>
+		</span>
+	</div>
+	<div>
+		<table style="width:1140px;border:2px solid #699069;">
+			<thead style="background:#98bf76;">
+				<tr style="font-size:16px;">
+					<th>车次</th>
+					<th style="background:#ffef16">抢</th>
+					<th>出发地</th>
+					<th>时间</th>
+					<th>历时</th>
+					<th>商务座</th>
+					<th>特等座</th>
+					<th>一等座</th>
+					<th>二等座</th>
+					<th>高软</th>
+					<th>软卧</th>
+					<th>硬卧</th>
+					<th>软座</th>
+					<th>硬座</th>
+					<th>无座</th>
+					<th>日期</th>
+					<th>备注</th>
+				</tr>
+			</thead>
+			<tbody>
+				<span style="display: inline-block;padding-bottom:10px;">
+					<span ng-repeat='train_type in train_types'>
+						<input type="checkbox" ng-click="checkStatus(train_type.code,train_type.status)" ng-model='train_type.status' class="check"><span style="background:{{train_type.color}}" class="station-train-type" ng-bind="train_type.text"></span>
+					</span>
+					<span ng-repeat='seat_type in model.seat_types'>
+						<input type="checkbox" class="check" ng-model="seat_type.status">
+						<span ng-bind='seat_type.text'></span>
+					</span>
+				</span>
+				<tr ng-repeat="data in datas" ng-class='{true:"back",false:""}[isIndex==$index]' ng-mouseover="changeBack($index)" ng-click="checkQiang(data)">
+					<!-- 车次 -->
+					<td style="text-align:left;padding-left:10px">
+						<span class="station-train-type" ng-init="config=trainType(data.queryLeftNewDTO.station_train_code)" ng-bind='config.text' style="background:{{config.color}}"></span><span ng-bind='data.queryLeftNewDTO.station_train_code'></span>
+					</td>
+					<!-- 抢 -->
+					<td ng-bind='"抢"' ng-class='{true:"dbl",false:""}[data.isQiang]'></td>
+					<!-- 出发地 -->
+					<td class="font-sz-12">
+						<span ng-bind="data.queryLeftNewDTO.from_station_name"></span></br>
+						<span ng-bind="data.queryLeftNewDTO.to_station_name"></span>
+					</td>
+					<!-- 事件 -->
+					<td class="font-sz-12">
+						<span ng-bind="data.queryLeftNewDTO.start_time"></span></br>
+						<span ng-bind="data.queryLeftNewDTO.arrive_time"></span>
+					</td>
+					<!-- 历时 -->
+					<td ng-bind='data.queryLeftNewDTO.lishi'></td>
+					<!-- 商务座 -->
+					<td ng-bind='data.queryLeftNewDTO.swz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.swz_num),'wupiao':!reg.test(data.queryLeftNewDTO.swz_num)}"></td>
+					<!-- 特等座 -->
+					<td ng-bind='"--"'></td>
+					<!-- 一等座 -->
+					<td ng-bind='data.queryLeftNewDTO.zy_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.zy_num),'wupiao':!reg.test(data.queryLeftNewDTO.zy_num)}"></td>
+					<!-- 二等座 -->
+					<td ng-bind='data.queryLeftNewDTO.ze_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.ze_num),'wupiao':!reg.test(data.queryLeftNewDTO.ze_num)}"></td>
+					<!-- 高软 -->
+					<td ng-bind='"--"'></td>
+					<!-- 软卧 -->
+					<td ng-bind='data.queryLeftNewDTO.rw_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.rw_num),'wupiao':!reg.test(data.queryLeftNewDTO.rw_num)}"></td>
+					<!-- 硬卧 -->
+					<td ng-bind='data.queryLeftNewDTO.yw_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.yw_num),'wupiao':!reg.test(data.queryLeftNewDTO.yw_num)}"></td>
+					<!-- 软座 -->
+					<td ng-bind='data.queryLeftNewDTO.rz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.rz_num),'wupiao':!reg.test(data.queryLeftNewDTO.rz_num)}"></td>
+					<!-- 硬座 -->
+					<td ng-bind='data.queryLeftNewDTO.yz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.yz_num),'wupiao':!reg.test(data.queryLeftNewDTO.yz_num)}"></td>
+					<!-- 无座 -->
+					<td ng-bind='data.queryLeftNewDTO.wz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.wz_num),'wupiao':!reg.test(data.queryLeftNewDTO.wz_num)}"></td>
+					<!-- 日期 -->
+					<td ng-bind='data.queryLeftNewDTO.start_train_date' style="color:#729668"></td>
+					<!-- 备注 -->
+					<td ng-bind='data.buttonTextInfo'></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

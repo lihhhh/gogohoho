@@ -1,0 +1,24 @@
+<div class="login">
+	<div>
+		<label class="login-lbl">账号 :</label><input type="text" placeholder="12306账号" ng-model='user.userName'>
+	</div>
+	<div>
+		<label class="login-lbl">密码 :</label><input type="password" placeholder="密码" ng-model='user.password'>
+	</div>
+	<div>
+		<label class="login-lbl">验证码 :</label>
+		<div class="code">
+			<img src="{{'/getImage?'+random}}">
+			<div class="img-click" ng-click='getCoordinate($event)'>
+				<span  ng-repeat="code in user.codeData" style="position:absolute;left:{{code.offsetX-10}}px;top:{{code.offsetY-10}}px;">
+					<span class="sign"></span>
+				</span>
+			</div>
+			<div class="renovate" ng-click='changeRandom()'></div>
+		</div>
+		<div class="clear-ft"></div>
+	</div>
+	<div>
+		<button class="btn btn-defult btn-login" ng-click='loginUp()'>登陆</button>
+	</div>
+</div>

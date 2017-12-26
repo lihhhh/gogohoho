@@ -1,0 +1,68 @@
+table thead th {
+	padding: 10px;
+	text-align: center;
+}
+tbody td {
+	text-align: center;
+	border: 1px solid #8eaf80;
+	padding: 5px;
+}
+.check {
+	width:15px;
+	height:15px;
+	margin:0 !important;
+	vertical-align:middle;
+}
+.lbl {
+	padding: 10px;
+}
+.btn-go {
+    background: #9ad29a;
+    margin-left: 70px;
+}
+.go-qiang {
+	width: 132px;
+	margin: 20px auto;
+}
+.condition {
+	margin:60px auto 0 auto;
+	width:1140px;
+}
+.btn-mg {
+	height: 34px;
+	width: 73px;
+	margin-left: 38px;
+    background: #9ad29a;
+    border: 1px solid #d0b6b6;
+}
+.active {
+	color:blue;
+}
+.wupiao {
+	color:#8a7979;
+}
+.font-sz-12 {
+	font-size: 12px;
+}
+.font-sz-12 span:last-child {
+	color: #729668;
+}
+.back {
+	background: #b8d29b;
+}
+.station-train-type {
+	font-size: 12px;
+    display: inline-block;
+    background: #cf973f;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    color: white;
+    margin-right: 5px;
+    text-align: center;
+    line-height: 14px;
+}
+.dbl {
+    background: #509022;
+    color: #e6f700;
+}

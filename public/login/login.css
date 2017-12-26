@@ -1,0 +1,54 @@
+.login {
+	width:600px;
+	margin:60px auto;
+}
+.sign {
+	display: inline-block;
+    background: #7e06ff;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}
+.code {
+	position: relative;
+	float: right;
+	margin-right: 103px;
+	background: white;
+	width: 317px;
+	height: 194px;
+	border: 2px solid #b1a798;
+	text-align: center;
+}
+.login-lbl {
+	padding: 20px 40px;
+	width:180px;
+	text-align: right;
+}
+.login input {
+	width:318px;
+}
+.btn-login {
+	width: 158px;
+	margin:20px;
+	margin-left: 178px;
+	background: #a7b535;
+	font-family: '微软雅黑';
+	font-size: 15px;
+	font-weight: bold;
+}
+.img-click {
+	position: absolute;
+	width: 293px;
+	height: 148px;
+	left: 10px;
+	bottom: 4px;
+}
+.renovate {
+	position: absolute;
+	top: 2px;
+	right: 12px;
+	width: 54px;
+	height: 25px;
+	cursor: pointer;
+	background: url(/images/captcha.png);
+}
