@@ -1,9 +1,9 @@
 myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGetData,$interval){
 	/*页面数据绑定*/
 	$scope.model={
-		start_date:'2017-01-23',
+		start_date:new Date().toISOString().split('T')[0],
 		start_city:'杭州东',
-		end_city:'开封',
+		end_city:'郑州',
 		passengers:'',
 		passengerTicketStr:'',
 		seat_types:{
@@ -82,7 +82,7 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			color:'#8392b5'
 		}
 	];
-	var socket = io.connect('http://localhost:8089');
+	var socket = io.connect('http://192.168.2.35:8089');
 	socket.on('msg',function(obj){
 			console.log(obj);
 		});
@@ -97,6 +97,7 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			$scope.passengers=eval(_d.data);
 		}else{
 			$scope.passengers=[];
+			window.location.href='http://192.168.2.35:8089/#/';
 		}
 	});
 	/*查询*/
@@ -112,20 +113,22 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		    $interval.cancel($scope.timer);
 			$scope.btnMg="查询";
 			console.log(_d);
-			if(_d.status){
-				_d.data.map(function(item){
-					item.isQiang=false;
-				});
-				$scope.train_types.map(function(item){
-					item.status=false;
-				});
-				for(var key in $scope.model.seat_types){
-					$scope.model.seat_types[key].status=false;
-				}
-				$scope.datas=_d.data;
+			if(_d.data.status){
+				$scope.datas = _d.data.data.result;
+				// _d.data.map(function(item){
+				// 	item.isQiang=false;
+				// });
+				// $scope.train_types.map(function(item){
+				// 	item.status=false;
+				// });
+				// for(var key in $scope.model.seat_types){
+				// 	$scope.model.seat_types[key].status=false;
+				// }
+				// $scope.datas=_d.data;
 			}
 		});
 	};
+	$scope.search();
 	/*复选框点击事件 点击对应的车次类型 下方车次信息出现抢或取消抢*/
 	$scope.checkStatus=function(code,status){
 		var reg=new RegExp('[0-9+]');

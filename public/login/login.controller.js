@@ -20,7 +20,7 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp",function($scope,rcLoginUp){
 						$scope.user.code='';
 						console.log(_d);
 						if(_d.data.result_code=='0'){
-							window.location.href='http://127.0.0.1:8089/#/main';
+							window.location.href='http://192.168.2.35:8089/#/main';
 						}
 					});
 				}else{

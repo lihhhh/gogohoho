@@ -49,46 +49,46 @@
 				<tr ng-repeat="data in datas" ng-class='{true:"back",false:""}[isIndex==$index]' ng-mouseover="changeBack($index)" ng-click="checkQiang(data)">
 					<!-- 车次 -->
 					<td style="text-align:left;padding-left:10px">
-						<span class="station-train-type" ng-init="config=trainType(data.queryLeftNewDTO.station_train_code)" ng-bind='config.text' style="background:{{config.color}}"></span><span ng-bind='data.queryLeftNewDTO.station_train_code'></span>
+						<span class="station-train-type" ng-init="config=trainType(data[3])" ng-bind='config.text' style="background:{{config.color}}"></span><span ng-bind='data[3]'></span>
 					</td>
 					<!-- 抢 -->
 					<td ng-bind='"抢"' ng-class='{true:"dbl",false:""}[data.isQiang]'></td>
 					<!-- 出发地 -->
 					<td class="font-sz-12">
-						<span ng-bind="data.queryLeftNewDTO.from_station_name"></span></br>
-						<span ng-bind="data.queryLeftNewDTO.to_station_name"></span>
+						<span ng-bind="data[6]"></span></br>
+						<span ng-bind="data[7]"></span>
 					</td>
-					<!-- 事件 -->
+					<!-- 时间 -->
 					<td class="font-sz-12">
-						<span ng-bind="data.queryLeftNewDTO.start_time"></span></br>
-						<span ng-bind="data.queryLeftNewDTO.arrive_time"></span>
+						<span ng-bind="data[8]"></span></br>
+						<span ng-bind="data[9]"></span>
 					</td>
 					<!-- 历时 -->
-					<td ng-bind='data.queryLeftNewDTO.lishi'></td>
+					<td ng-bind='data[10]'></td>
 					<!-- 商务座 -->
-					<td ng-bind='data.queryLeftNewDTO.swz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.swz_num),'wupiao':!reg.test(data.queryLeftNewDTO.swz_num)}"></td>
+					<td ng-bind='data[32]' ng-class="{'active':reg.test(data.queryLeftNewDTO.swz_num),'wupiao':!reg.test(data.queryLeftNewDTO.swz_num)}"></td>
 					<!-- 特等座 -->
 					<td ng-bind='"--"'></td>
 					<!-- 一等座 -->
-					<td ng-bind='data.queryLeftNewDTO.zy_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.zy_num),'wupiao':!reg.test(data.queryLeftNewDTO.zy_num)}"></td>
+					<td ng-bind='data[31]' ng-class="{'active':reg.test(data.queryLeftNewDTO.zy_num),'wupiao':!reg.test(data.queryLeftNewDTO.zy_num)}"></td>
 					<!-- 二等座 -->
-					<td ng-bind='data.queryLeftNewDTO.ze_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.ze_num),'wupiao':!reg.test(data.queryLeftNewDTO.ze_num)}"></td>
+					<td ng-bind='data[30]' ng-class="{'active':reg.test(data.queryLeftNewDTO.ze_num),'wupiao':!reg.test(data.queryLeftNewDTO.ze_num)}"></td>
 					<!-- 高软 -->
 					<td ng-bind='"--"'></td>
 					<!-- 软卧 -->
-					<td ng-bind='data.queryLeftNewDTO.rw_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.rw_num),'wupiao':!reg.test(data.queryLeftNewDTO.rw_num)}"></td>
+					<td ng-bind='data[23]' ng-class="{'active':reg.test(data.queryLeftNewDTO.rw_num),'wupiao':!reg.test(data.queryLeftNewDTO.rw_num)}"></td>
 					<!-- 硬卧 -->
-					<td ng-bind='data.queryLeftNewDTO.yw_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.yw_num),'wupiao':!reg.test(data.queryLeftNewDTO.yw_num)}"></td>
+					<td ng-bind='data[28]' ng-class="{'active':reg.test(data.queryLeftNewDTO.yw_num),'wupiao':!reg.test(data.queryLeftNewDTO.yw_num)}"></td>
 					<!-- 软座 -->
 					<td ng-bind='data.queryLeftNewDTO.rz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.rz_num),'wupiao':!reg.test(data.queryLeftNewDTO.rz_num)}"></td>
 					<!-- 硬座 -->
-					<td ng-bind='data.queryLeftNewDTO.yz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.yz_num),'wupiao':!reg.test(data.queryLeftNewDTO.yz_num)}"></td>
+					<td ng-bind='data[29]' ng-class="{'active':reg.test(data.queryLeftNewDTO.yz_num),'wupiao':!reg.test(data.queryLeftNewDTO.yz_num)}"></td>
 					<!-- 无座 -->
-					<td ng-bind='data.queryLeftNewDTO.wz_num' ng-class="{'active':reg.test(data.queryLeftNewDTO.wz_num),'wupiao':!reg.test(data.queryLeftNewDTO.wz_num)}"></td>
+					<td ng-bind='data[26]' ng-class="{'active':reg.test(data.queryLeftNewDTO.wz_num),'wupiao':!reg.test(data.queryLeftNewDTO.wz_num)}"></td>
 					<!-- 日期 -->
-					<td ng-bind='data.queryLeftNewDTO.start_train_date' style="color:#729668"></td>
+					<td ng-bind='data[13]' style="color:#729668"></td>
 					<!-- 备注 -->
-					<td ng-bind='data.buttonTextInfo'></td>
+					<td ng-bind='data[1]'></td>
 				</tr>
 			</tbody>
 		</table>

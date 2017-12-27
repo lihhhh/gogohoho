@@ -1,0 +1,27 @@
+{
+  "name": "gogohoho",
+  "version": "1.0.0",
+  "description": "",
+  "main": "12306.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lihhhh/gogohoho.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lihhhh/gogohoho/issues"
+  },
+  "homepage": "https://github.com/lihhhh/gogohoho#readme",
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.7",
+    "request": "^2.83.0",
+    "socket.io": "^2.0.4"
+  }
+}

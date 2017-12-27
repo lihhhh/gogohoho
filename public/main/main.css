@@ -6,6 +6,7 @@ tbody td {
 	text-align: center;
 	border: 1px solid #8eaf80;
 	padding: 5px;
+	cursor: pointer;
 }
 .check {
 	width:15px;
