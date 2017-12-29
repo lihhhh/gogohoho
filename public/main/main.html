@@ -5,12 +5,41 @@
 		<label class="text-right lbl" for='end-city'>出发日期</label><input ng-model='model.start_date' id='end-city' type="text" placeholder="出发日期">
 		<button class="btn btn-defult btn-mg" ng-click='search()' ng-bind="btnMg"></button>
 
-		<button class="btn btn-go" ng-click='goSocket()'>开始抢票</button>
+		<button class="btn btn-go" ng-click='goSocket()' ng-bind="goPtimer.goP?'停止抢票':'开始抢票'"></button>
+	</div>
+	<div class="qiang-box" ng-show="goPtimer.goP">
+		<div class="qiang-msg">
+			<div>
+				<span>所选车次：</span>
+				<span>{{getCc().join('、')}}</span>
+			</div>
+			<div>
+				<span>所选席位：</span>
+				<span ng-repeat="seat in model.seat_types" ng-if='seat.status'>{{seat.text+'、'}}</span>
+			</div>
+		</div>
 	</div>
 	<div style="padding:20px">
 		<span class="glyphicon glyphicon-plus"></span><span style="padding-left:10px;padding-right: 20px">添加乘客</span>
 		<span ng-repeat='passenger in passengers' style="padding-right: 10px">
 			<input type="checkbox" class="check" name=""><span ng-bind='passenger.passenger_name'></span>
+		</span>
+	</div>
+	<div>
+		<span style="display: inline-block;padding-bottom:10px;width: 100%">
+			<div class="pull-left">
+				<span>筛选：</span>
+				<span ng-repeat='train_type in train_types'>
+					<input type="checkbox" ng-click="checkStatus(train_type)" ng-checked='train_type.status' class="check"><span style="background:{{train_type.color}}" class="station-train-type" ng-bind="train_type.text"></span>
+				</span>
+			</div>
+			<div class="pull-right">
+				<span>抢票座位指定：</span>
+				<span ng-repeat='seat_type in model.seat_types'>
+					<input type="checkbox" class="check" ng-checked="seat_type.status">
+					<span ng-bind='seat_type.text'></span>
+				</span>
+			</div>
 		</span>
 	</div>
 	<div>
@@ -37,16 +66,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<span style="display: inline-block;padding-bottom:10px;">
-					<span ng-repeat='train_type in train_types'>
-						<input type="checkbox" ng-click="checkStatus(train_type.code,train_type.status)" ng-model='train_type.status' class="check"><span style="background:{{train_type.color}}" class="station-train-type" ng-bind="train_type.text"></span>
-					</span>
-					<span ng-repeat='seat_type in model.seat_types'>
-						<input type="checkbox" class="check" ng-model="seat_type.status">
-						<span ng-bind='seat_type.text'></span>
-					</span>
-				</span>
-				<tr ng-repeat="data in datas" ng-class='{true:"back",false:""}[isIndex==$index]' ng-mouseover="changeBack($index)" ng-click="checkQiang(data)">
+				<tr ng-repeat="data in datas" ng-if="!data.hide" ng-class='{true:"back",false:""}[isIndex==$index]' ng-mouseover="changeBack($index)" ng-click="checkQiang(data)">
 					<!-- 车次 -->
 					<td style="text-align:left;padding-left:10px">
 						<span class="station-train-type" ng-init="config=trainType(data[3])" ng-bind='config.text' style="background:{{config.color}}"></span><span ng-bind='data[3]'></span>

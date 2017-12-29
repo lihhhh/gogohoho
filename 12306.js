@@ -16,37 +16,59 @@ var io = require('socket.io')(http);
 var ca = fs.readFileSync(__dirname + '/srca.cer.pem');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-// io.on('error', function(exc) {
-//     console.log("ignoring exception: 1111111111" + exc);
-// });
-// io.on('connection', function(socket) {
-//     socket.on('error', function(exc) {
-//         console.log("ignoring exception: 1111111111" + exc);
-//     });
-//     socket.on('msg', function(obj) {
-//         var cookies = cookie.parse(obj.cookies);
-//         if (cookies == {} || !cookies.userName) {
-//             io.emit('msg', '请重新登录');
-//         } else {
-//             var finddata = { userName: cookies.userName, JSESSIONID: cookies.JSESSIONID };
-//             var updata = {
-//                 start_city: obj.model.start_city,
-//                 start_date: obj.model.start_date,
-//                 end_city: obj.model.end_city,
-//                 seat_types: obj.model.seat_types
-//             };
-//             db.find(finddata).then(function(_d) {
-//                 return Promise.resolve(_d);
-//             }).then(function(_d) {
-//                 if (_d.length >= 1) {
-//                     db.update(finddata, updata).then(function(__d) {
-//                         console.log(__d);
-//                     });
-//                 };
-//             });
-//         };
-//     });
-// });
+io.on('error', function(exc) {
+    console.log("ignoring exception: 1111111111" + exc);
+});
+io.on('connection', function(socket) {
+    socket.on('error', function(exc) {
+        console.log("ignoring exception: 1111111111" + exc);
+    });
+    socket.on('msg', function(obj) {
+        console.log('收到抢票请求');
+        var data = obj.model;
+        var cookies = cookie.parse(obj.cookies);
+        var ck = cookie.serialize('JSESSIONID', cookies.JSESSIONID);
+        ck += ';' + cookie.serialize('BIGipServerotn', cookies.BIGipServerotn);
+        // ck += ';' + cookie.serialize('tk', req.cookies.newapptk);
+        var data = {
+            "leftTicketDTO.train_date": data.start_date,
+            "leftTicketDTO.from_station": config.city[data.start_city],
+            "leftTicketDTO.to_station": config.city[data.end_city],
+            "purpose_codes": "ADULT"
+        };
+        var options = {
+            hostname: 'kyfw.12306.cn',
+            path: '/otn/leftTicket/query',
+            headers: {
+                Cookie: ck,
+                Referer: "https://kyfw.12306.cn/otn/leftTicket/init"
+            },
+            ca: [ca]
+        };
+        console.log('请求车次信息,等待12306返回数据');;
+        getHttps(options, data).then(function(_d) {
+            console.log(_d);
+            var result;
+            if (_d.html) {
+                result = JSON.parse(_d.html);
+            }
+            if (result && result.data && result.data.result) {
+                result.data.result = result.data.result.map(function(item) {
+                    var arr = item.split('|');
+                    arr = arr.map(function(_item) {
+                        if (result.data.map[_item]) {
+                            return result.data.map[_item];
+                        } else {
+                            return _item;
+                        }
+                    })
+                    return arr;
+                })
+            }
+            socket.emit('data',{ success: true, data: result });
+        });
+    });
+});
 
 
 /*设置静态文件服务*/
@@ -82,8 +104,8 @@ function httpReq(options, data) {
     var promise = new Promise(function(resolve, reject) {
         var req = https.request(options, function(res) {
             var chunks = [];
-            res.on('data', function(chunk) {
-                chunks.push(chunk);
+            res.on('data', function(a) {
+                chunks.push(a);
             })
             res.on('end', function() {
                 //console.log(Buffer.concat(chunks).toString());
@@ -297,7 +319,7 @@ app.get('/getData', function(req, res) {
         if (_d.html) {
             result = JSON.parse(_d.html);
         }
-        if (result&&result.data && result.data.result) {
+        if (result && result.data && result.data.result) {
             result.data.result = result.data.result.map(function(item) {
                 var arr = item.split('|');
                 arr = arr.map(function(_item) {
@@ -314,6 +336,41 @@ app.get('/getData', function(req, res) {
         res.send({ success: true, data: result });
     });
 });
+
+// 验证登录状态
+app.get('/sfyz', function(req, res) {
+    var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
+    ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
+    ck += ';' + cookie.serialize('tk', req.cookies.newapptk);
+    var data = {
+        "tk": req.cookies.newapptk
+    };
+    var options = {
+        hostname: 'kyfw.12306.cn',
+        path: '/otn/index/initMy12306',
+        // path: '/otn/uamauthclient',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': ck
+        },
+        method: 'GET',
+        ca: [ca]
+    };
+    httpReq(options, data).then(function(_d) {
+        console.log(_d);
+        var result;
+        var reg = /<script xml:space="preserve">([\s\S]*?)</gm;
+        result = reg.exec(_d);
+        result = result ? result[1] : '';
+        console.log(result);
+        var out = {};
+        result = result.replace(/var /g, 'out.');
+        eval(result);
+        console.log(out);
+
+        res.send({ success: true, data: out });
+    });
+})
 
 app.get('/goPiao', function(req, res) {
     var data = req.query;

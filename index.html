@@ -17,16 +17,27 @@
 </head>
 <body style="background: #c3decc;" ng-app='myApp' ng-controller='myctrl'>
 	<div class="container">
+		<div class="clearfix use-title">
+			<div class="pull-right">
+				<span>你好</span>
+				<span>{{userData.user_name}}</span>
+				<span>|</span>
+				<span>退出</span>
+			</div>
+		</div>
 		<div ng-view></div>
 	</div>
 	<script src="global/script/socket.io.js"></script>
 	<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
 	<script src="https://apps.bdimg.com/libs/angular-route/1.3.13/angular-route.js"></script>
 	<script src="/app.js"></script>
+	<script src="/eventbus.factory.js"></script>
+	<script src="/login.yz.service.js"></script>
 	<script src="/login/login.directive.js"></script>
 	<script src="/login/login.factory.js"></script>
 	<script src="/login/login.controller.js"></script>
 	<script src="/main/main.factory.js"></script>
 	<script src="/main/main.controller.js"></script>
+
 </body>
 </html>

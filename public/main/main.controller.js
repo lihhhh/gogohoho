@@ -1,4 +1,5 @@
 myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGetData,$interval){
+	$scope.datas=[];
 	/*页面数据绑定*/
 	$scope.model={
 		start_date:new Date().toISOString().split('T')[0],
@@ -9,35 +10,43 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		seat_types:{
 			swz_num:{
 				text:'商务座',
-				status:false
+				status:true,
+				index:32
 			},
 			zy_num:{
 				text:'一等座',
-				status:false
+				status:true,
+				index:31
 			},
 			ze_num:{
 				text:'二等座',
-				status:false
+				status:true,
+				index:30
 			},
 			rw_num:{
 				text:'软卧',
-				status:false
+				status:true,
+				index:23
 			},
 			yw_num:{
 				text:'硬卧',
-				status:false
+				status:true,
+				index:28
 			},
 			rz_num:{
 				text:'软座',
-				status:false
+				status:true,
+				// index:32
 			},
 			yz_num:{
 				text:'硬座',
-				status:false
+				status:true,
+				index:29
 			},
 			wz_num:{
 				text:'无座',
-				status:false
+				status:true,
+				index:26
 			}  
 		}
 	};
@@ -45,40 +54,40 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		{
 			text:'高',
 			code:'G',
-			status:false,
+			status:true,
 			color:'#cf973f'
 		},
 		{
 			text:'城',
 			code:'C',
-			status:false,
+			status:true,
 			color:'#cf973f'
 		},
 		{
 			text:'动',
 			code:'D',
-			status:false,
+			status:true,
 			color:'#03a9f4'
 		},
 		{
 			text:'直',
 			code:'Z',
-			status:false,
+			status:true,
 			color:'#a63fcf'
 		},{
 			text:'特',
 			code:'T',
-			status:false,
+			status:true,
 			color:'#3c2e2e'
 		},{
 			text:'快',
 			code:'K',
-			status:false,
+			status:true,
 			color:'#467f45'
 		},{
 			text:'其',
 			code:'Q',
-			status:false,
+			status:true,
 			color:'#8392b5'
 		}
 	];
@@ -97,7 +106,7 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			$scope.passengers=eval(_d.data);
 		}else{
 			$scope.passengers=[];
-			window.location.href='http://192.168.2.35:8089/#/';
+			// window.location.href='http://192.168.2.35:8089/#/';
 		}
 	});
 	/*查询*/
@@ -115,55 +124,55 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			console.log(_d);
 			if(_d.data.status){
 				$scope.datas = _d.data.data.result;
-				// _d.data.map(function(item){
-				// 	item.isQiang=false;
-				// });
-				// $scope.train_types.map(function(item){
-				// 	item.status=false;
-				// });
-				// for(var key in $scope.model.seat_types){
-				// 	$scope.model.seat_types[key].status=false;
-				// }
-				// $scope.datas=_d.data;
 			}
 		});
 	};
 	$scope.search();
 	/*复选框点击事件 点击对应的车次类型 下方车次信息出现抢或取消抢*/
-	$scope.checkStatus=function(code,status){
+	$scope.checkStatus=function(train_type){
+		train_type.status=!train_type.status;
+		updateView();
+	};
+	// 更新车次列表的显示项
+	function updateView(){
 		var reg=new RegExp('[0-9+]');
 		if(!$scope.datas) return;
 		$scope.datas.map(function(item){
-			var CODE=item.queryLeftNewDTO.station_train_code.substring(0,1);
-			if(code==CODE){
-				item.isQiang=status;
-			}else if(code=='Q'&&reg.test(CODE)){
-				item.isQiang=status;
-			}
-			return item;
+			item.hide = false;
 		});
-	};
+		$scope.train_types.map(function(type){
+			$scope.datas.map(function(item){
+				var CODE=item[3].substring(0,1);
+				if(type.code==CODE){
+					item.hide = !type.status;
+				}else if(type.code=='Q'&&reg.test(CODE)){
+					item.hide = !type.status;
+				}
+			});
+		})
+	}
+	updateView();
 	/*下方车次信息点击事件 例：本页所有高字头的车次全部被选中 对应的上方高字复选框被自动勾选*/
 	$scope.checkQiang=function(data){
 		console.log(data);
 		data.isQiang=!data.isQiang;
-		var bool=true;
-		code=data.queryLeftNewDTO.station_train_code.substring(0,1);
-		$scope.datas.map(function(item){
-			var CODE=item.queryLeftNewDTO.station_train_code.substring(0,1);
-			if(code==CODE&&item.isQiang==false){
-				bool=false;
-			}
-			return item;
-		});
-		if(/([0-9]|[a-z])/.test(code)){
-			code='Q';
-		};
-		for(var key in $scope.train_types){
-			if($scope.train_types[key].code==code){
-				$scope.train_types[key].status=bool;
-			}
-		}
+		// var bool=true;
+		// code=data.queryLeftNewDTO.station_train_code.substring(0,1);
+		// $scope.datas.map(function(item){
+		// 	var CODE=item.queryLeftNewDTO.station_train_code.substring(0,1);
+		// 	if(code==CODE&&item.isQiang==false){
+		// 		bool=false;
+		// 	}
+		// 	return item;
+		// });
+		// if(/([0-9]|[a-z])/.test(code)){
+		// 	code='Q';
+		// };
+		// for(var key in $scope.train_types){
+		// 	if($scope.train_types[key].code==code){
+		// 		$scope.train_types[key].status=bool;
+		// 	}
+		// }
 	};
 	/*相应回车事件*/
 	$scope.keyDown=function(event){
@@ -171,6 +180,18 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			$scope.search();
 		}
 	}
+
+	/*获取勾选的车次*/
+	$scope.getCc = function(){
+		var out = [];
+		$scope.datas.map(function(item){
+			if(item.isQiang){
+				out.push(item[3]);
+			}
+		})
+		return out;
+	}
+	
 	/*复选框车次类型 和对应的颜色*/
 	$scope.trainType=function(text){
 		text=text.substring(0,1);
@@ -223,11 +244,28 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 	$scope.changeBack=function(index){
 		$scope.isIndex=index;
 	};
+	$scope.goPtimer={
+		timer:'',
+		goP:false
+	};
 	/*开始抢票点击事件*/
 	$scope.goSocket=function(){
-		socket.emit('msg',{
-			cookies:document.cookie,
-			model:$scope.model
-		});
+		if($scope.goPtimer.goP){
+			$interval.cancel($scope.goPtimer.timer);
+			$scope.goPtimer.goP=false;
+		}else{
+			$scope.goPtimer.timer = $interval(function(){
+				socket.emit('msg',{
+					cookies:document.cookie,
+					model:$scope.model
+				});
+			},3000);
+			$scope.goPtimer.goP=true;
+		}
 	}
+	socket.on('data',function(_d){
+		if(_d.data.status){
+			// $scope.datas = _d.data.data.result;
+		}
+	})
 }])

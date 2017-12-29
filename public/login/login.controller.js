@@ -1,4 +1,4 @@
-myapp.controller('rcLogin',['$scope',"rcLoginUp",function($scope,rcLoginUp){
+myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLoginUp,eventbus){
 	$scope.random=Math.random()*1;//随机数
 	$scope.user={
 		userName:'',
@@ -20,6 +20,7 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp",function($scope,rcLoginUp){
 						$scope.user.code='';
 						console.log(_d);
 						if(_d.data.result_code=='0'){
+							eventbus.broadcast('login.ok',{status:true});
 							window.location.href='http://192.168.2.35:8089/#/main';
 						}
 					});

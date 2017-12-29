@@ -8,6 +8,9 @@ tbody td {
 	padding: 5px;
 	cursor: pointer;
 }
+.use-title {
+	margin-top: 20px;
+}
 .check {
 	width:15px;
 	height:15px;
@@ -26,7 +29,7 @@ tbody td {
 	margin: 20px auto;
 }
 .condition {
-	margin:60px auto 0 auto;
+	margin:30px auto 0 auto;
 	width:1140px;
 }
 .btn-mg {
@@ -66,4 +69,18 @@ tbody td {
 .dbl {
     background: #509022;
     color: #e6f700;
+}
+.qiang-box {
+	position: relative;
+}
+.qiang-msg {
+	position: absolute;
+	padding: 20px;
+	top: 0;
+	right: 0;
+	width: 400px;
+	height: 400px;
+	border-radius: 8px;
+	background: rgba(42,42,42,0.8);
+	color: white;
 }
