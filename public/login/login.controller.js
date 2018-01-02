@@ -16,13 +16,14 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLo
 			if(_d.success){
 				if(_d.msg.result_code==4){
 					rcLoginUp.verificationUser($scope.user).then(function(_d){
+						return rcLoginUp.otnPassport();
+					}).then(function(){
+						return rcLoginUp.passportWebAuthUamtk();
+					}).then(function(){
 						$scope.user.codeData=[];
 						$scope.user.code='';
-						console.log(_d);
-						if(_d.data.result_code=='0'){
-							eventbus.broadcast('login.ok',{status:true});
-							window.location.href='http://127.0.0.1:9000/#/main';
-						}
+						eventbus.broadcast('login.ok',{status:true});
+						window.location.href='http://127.0.0.1:9000/#/main';
 					});
 				}else{
 					$scope.random=Math.random()*1;

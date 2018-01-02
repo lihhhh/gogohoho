@@ -279,24 +279,45 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 				if(it==data[3]){
 					for(var k in seat_types){
 						if(seat_types[k].status&&reg.test(data[seat_types[k].index])&&data[seat_types[k].index]!=0){
-							alert(data[seat_types[k].index]);
+							// alert(data[seat_types[k].index]);
+							// alert('123');
 							// 首先验证登陆状态
-							socket.emit('isLogin',{
-								cookies:document.cookie
-							});
-							// socket.emit('goP',{
-							// 	cookies:document.cookie,
-							// 	data:data,
-							// 	seat:seat_types[k],
-							// 	passengers:getPassengers()[0],
-							// 	model:$scope.model
-							// })
+							rcGetData.otnLoginCheckUser({
+								cookies:document.cookie,
+								data:data,
+								seat:seat_types[k],
+								passengers:getPassengers()[0],
+								model:$scope.model
+							}).then(function(_d){
+								console.log(_d);
+								//余票查询
+								return rcGetData.otnLeftTicketSubmitOrderRequest(_d.lastParams);
+							}).then(function(_d){
+								return rcGetData.otnConfirmPassengerInitDc(_d.lastParams);
+							}).then(function(_d){
+								return rcGetData.otnConfirmPassengerCheckOrderInfo(_d.lastParams);
+							}).then(function(_d){
+								console.log(_d);
+								return rcGetData.otnConfirmPassengerGetQueueCount(_d.lastParams);
+							}).then(function(_d){
+								console.log(_d);
+								if(_d.data.data.ticket>_d.data.data.count){
+									alert('当前余票：'+_d.data.data.ticket);
+									return rcGetData.otnConfirmPassengerConfirmSingleForQueue(_d.lastParams);
+								}
+							}).then(function(_d){
+								console.log(_d);
+							})
 						}
 					}
 				}
 			})
 		})
 	};
+	socket.on('isL',function(msg){
+		console.log(msg);
+		socket.emit('goP',msg);
+	});
 	/*开始抢票点击事件*/
 	$scope.goSocket=function(){
 		if($scope.goPtimer.goP){
