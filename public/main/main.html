@@ -5,9 +5,12 @@
 		<label class="text-right lbl" for='end-city'>出发日期</label><input ng-model='model.start_date' id='end-city' type="text" placeholder="出发日期">
 		<button class="btn btn-defult btn-mg" ng-click='search()' ng-bind="btnMg"></button>
 
-		<button class="btn btn-go" ng-click='goSocket()' ng-bind="goPtimer.goP?'停止抢票':'开始抢票'"></button>
+		<button class="btn btn-go" ng-click='goPtimer.goPshow=!goPtimer.goPshow' ng-bind="'抢票菜单'"></button>
 	</div>
-	<div class="qiang-box" ng-show="goPtimer.goP">
+	<div class="qiang-box" ng-show="goPtimer.goPshow">
+		<div>
+			<span ng-click='goPtimer.goPshow=false' class="glyphicon glyphicon-remove close-btn"></span>
+		</div>
 		<div class="qiang-msg">
 			<div>
 				<span>所选车次：</span>
@@ -15,14 +18,17 @@
 			</div>
 			<div>
 				<span>所选席位：</span>
-				<span ng-repeat="seat in model.seat_types" ng-if='seat.status'>{{seat.text+'、'}}</span>
+				<span ng-repeat="seat in model.seat_types" ng-if="seat.status">{{seat.text+'、'}}</span>
+			</div>
+			<div class="start-go-btn clearfix">
+				<button class="btn btn-defult btn-start" ng-click="goSocket()">{{goPtimer.goP?'停止抢票':'开始抢票'}}</button>
 			</div>
 		</div>
 	</div>
 	<div style="padding:20px">
 		<span class="glyphicon glyphicon-plus"></span><span style="padding-left:10px;padding-right: 20px">添加乘客</span>
 		<span ng-repeat='passenger in passengers' style="padding-right: 10px">
-			<input type="checkbox" class="check" name=""><span ng-bind='passenger.passenger_name'></span>
+			<input type="checkbox" class="check" ng-click="passenger.status=!passenger.status" ng-checked="passenger.status"><span ng-bind='passenger.passenger_name'></span>
 		</span>
 	</div>
 	<div>
@@ -36,7 +42,7 @@
 			<div class="pull-right">
 				<span>抢票座位指定：</span>
 				<span ng-repeat='seat_type in model.seat_types'>
-					<input type="checkbox" class="check" ng-checked="seat_type.status">
+					<input type="checkbox" class="check" ng-click="seat_type.status=!seat_type.status" ng-checked="seat_type.status">
 					<span ng-bind='seat_type.text'></span>
 				</span>
 			</div>

@@ -84,3 +84,26 @@ tbody td {
 	background: rgba(42,42,42,0.8);
 	color: white;
 }
+.start-go-btn {
+	position: absolute;
+	bottom: 10px;
+	left: 0;
+	width: 100%;
+}
+.btn-start {
+	float: right;
+	margin-right: 20px;
+	background: #9ad29a;
+	color: black;
+}
+.close-btn {
+	position: absolute;
+	cursor: pointer;
+	top: 6px;
+	right: 10px;
+	color: #e1dede;
+	z-index: 10;
+}
+.close-btn:hover {
+	color: white;
+}

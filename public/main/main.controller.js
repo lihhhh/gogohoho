@@ -3,50 +3,58 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 	/*页面数据绑定*/
 	$scope.model={
 		start_date:new Date().toISOString().split('T')[0],
-		start_city:'杭州东',
+		start_city:'杭州',
 		end_city:'郑州',
 		passengers:'',
 		passengerTicketStr:'',
 		seat_types:{
 			swz_num:{
 				text:'商务座',
-				status:true,
-				index:32
+				status:false,
+				index:32,
+				code:'9'
 			},
 			zy_num:{
 				text:'一等座',
-				status:true,
-				index:31
+				status:false,
+				index:31,
+				code:'M'
 			},
 			ze_num:{
 				text:'二等座',
-				status:true,
-				index:30
+				status:false,
+				index:30,
+				code:'O'
 			},
 			rw_num:{
 				text:'软卧',
-				status:true,
-				index:23
+				status:false,
+				index:23,
+				code:'4'
 			},
 			yw_num:{
 				text:'硬卧',
-				status:true,
-				index:28
+				status:false,
+				index:28,
+				code:'3'
 			},
 			rz_num:{
 				text:'软座',
-				status:true,
-				// index:32
+				status:false,
+				// index:32,
+				code:'2'
 			},
 			yz_num:{
 				text:'硬座',
-				status:true,
-				index:29
+				status:false,
+				index:29,
+				code:'1'
 			},
 			wz_num:{
 				text:'无座',
-				status:true,
-				index:26
+				status:false,
+				index:26,
+				code:'1'
 			}  
 		}
 	};
@@ -91,7 +99,7 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 			color:'#8392b5'
 		}
 	];
-	var socket = io.connect('http://192.168.2.35:8089');
+	var socket = io.connect('http://127.0.0.1:9000');
 	socket.on('msg',function(obj){
 			console.log(obj);
 		});
@@ -101,9 +109,10 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 	$scope.reg=new RegExp('([0-9]|有)+');
 	/*获取联系人信息*/
 	rcGetData.getPassengers().then(function(_d){
-		console.log(_d);
+		
 		if(_d.success){
 			$scope.passengers=eval(_d.data);
+			console.log($scope.passengers);
 		}else{
 			$scope.passengers=[];
 			// window.location.href='http://192.168.2.35:8089/#/';
@@ -122,7 +131,7 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		    $interval.cancel($scope.timer);
 			$scope.btnMg="查询";
 			console.log(_d);
-			if(_d.data.status){
+			if(_d.data&&_d.data.status){
 				$scope.datas = _d.data.data.result;
 			}
 		});
@@ -248,6 +257,46 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		timer:'',
 		goP:false
 	};
+
+	function getPassengers(){
+		var out = [];
+		$scope.passengers.map(function(item){
+			if(item.status){
+				out.push(item);
+			}
+		})
+		return out;
+	};
+
+	function isYp(datas){
+		console.log(datas);
+		var seat_types = $scope.model.seat_types;
+		var reg = /^[\d有]+$/g;
+		// 获取抢票车次
+		var cc = $scope.getCc();
+		cc.map(function(it){
+			datas.map(function(data){
+				if(it==data[3]){
+					for(var k in seat_types){
+						if(seat_types[k].status&&reg.test(data[seat_types[k].index])&&data[seat_types[k].index]!=0){
+							alert(data[seat_types[k].index]);
+							// 首先验证登陆状态
+							socket.emit('isLogin',{
+								cookies:document.cookie
+							});
+							// socket.emit('goP',{
+							// 	cookies:document.cookie,
+							// 	data:data,
+							// 	seat:seat_types[k],
+							// 	passengers:getPassengers()[0],
+							// 	model:$scope.model
+							// })
+						}
+					}
+				}
+			})
+		})
+	};
 	/*开始抢票点击事件*/
 	$scope.goSocket=function(){
 		if($scope.goPtimer.goP){
@@ -264,8 +313,9 @@ myapp.controller('reMain',['$scope',"rcGetData","$interval",function($scope,rcGe
 		}
 	}
 	socket.on('data',function(_d){
-		if(_d.data.status){
+		if(_d.data&&_d.data.status){
 			// $scope.datas = _d.data.data.result;
+			isYp(_d.data.data.result);
 		}
 	})
 }])

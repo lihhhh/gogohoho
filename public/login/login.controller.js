@@ -21,7 +21,7 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLo
 						console.log(_d);
 						if(_d.data.result_code=='0'){
 							eventbus.broadcast('login.ok',{status:true});
-							window.location.href='http://192.168.2.35:8089/#/main';
+							window.location.href='http://127.0.0.1:9000/#/main';
 						}
 					});
 				}else{
