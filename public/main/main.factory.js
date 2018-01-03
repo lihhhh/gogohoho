@@ -71,6 +71,24 @@ myapp.factory('rcGetData',function($http,$q){
 			});
 		return deferred.promise;
 	};
+	var otnConfirmPassengerQueryOrderWaitTime=function(_d){
+		var deferred = $q.defer(); 
+		$http({method:'GET',url:'/otnConfirmPassengerQueryOrderWaitTime',params:_d}).success(function(data){
+				deferred.resolve(data);
+			}).error(function(err){
+				deferred.resolve(err);
+			});
+		return deferred.promise;
+	};
+	var otnUamauthclient=function(_d){
+		var deferred = $q.defer(); 
+		$http({method:'GET',url:'/otnUamauthclient',params:_d}).success(function(data){
+				deferred.resolve(data);
+			}).error(function(err){
+				deferred.resolve(err);
+			});
+		return deferred.promise;
+	};
 	return {
 		getData:getData,//车次查询
 		getPassengers:getPassengers,//获取联系人
@@ -79,6 +97,8 @@ myapp.factory('rcGetData',function($http,$q){
 		otnConfirmPassengerInitDc:otnConfirmPassengerInitDc,//
 		otnConfirmPassengerCheckOrderInfo:otnConfirmPassengerCheckOrderInfo,
 		otnConfirmPassengerGetQueueCount:otnConfirmPassengerGetQueueCount,//查询排队情况
-		otnConfirmPassengerConfirmSingleForQueue:otnConfirmPassengerConfirmSingleForQueue
+		otnConfirmPassengerConfirmSingleForQueue:otnConfirmPassengerConfirmSingleForQueue,//下订单
+		otnConfirmPassengerQueryOrderWaitTime:otnConfirmPassengerQueryOrderWaitTime,//查看下单出票结果
+		otnUamauthclient:otnUamauthclient
 	};
 });

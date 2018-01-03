@@ -179,6 +179,7 @@ app.get('/loginUp', function(req, res) {
     getHttps(options, data).then(function(_d) {
         var result = JSON.parse(_d.html);
         console.log(result);
+        setCookie(res,_d.cookies);
         /*返回验证码验证结果*/
         res.send({ success: true, msg: result });
     })
@@ -188,6 +189,65 @@ app.get('/loginUp', function(req, res) {
     //     res.send({ success: true, msg: JSON.parse(_d.html) });
     // });
 });
+
+
+/*登录验证 设置tk*/
+app.get('/otnUamauthclient',function(req,res){
+    var ck = req.headers.cookie;
+
+    var options = {
+        hostname: 'kyfw.12306.cn',
+        path: '/otn/uamauthclient',
+        headers: {
+            Cookie: ck + ';current_captcha_type=Z;_jc_save_wfdc_flag=dc;'
+        },
+        method:'POST',
+        ca: [ca]
+    };
+    var data = {
+        tk:cookie.parse(ck).tk
+    };
+    getHttps(options,data).then(function(_d){
+        console.log(_d.cookies);
+        setCookie(res,_d.cookies);
+        if(_d.html){
+            result = JSON.parse(_d.html);
+        }
+        console.log(result);
+        res.send({ success: true, data:result});
+    })
+})
+
+/*订单状态查询*/
+app.get('/otnConfirmPassengerQueryOrderWaitTime',function(req,res){
+    var ck = req.headers.cookie;
+    var params = req.query;
+    var model = JSON.parse(params.model);
+    var passengers = JSON.parse(params.passengers);
+    var seat = JSON.parse(params.seat);
+
+    var options = {
+        hostname: 'kyfw.12306.cn',
+        path: '/otn/confirmPassenger/queryOrderWaitTime',
+        headers: {
+            Cookie: ck + ';current_captcha_type=Z;_jc_save_wfdc_flag=dc;'
+        },
+        ca: [ca]
+    };
+    var data = {
+        random:Math.random()*1,
+        tourFlag:'dc',
+        _json_att:'',
+        REPEAT_SUBMIT_TOKEN:params.REPEAT_SUBMIT_TOKEN
+    };
+    getHttps(options,data).then(function(_d){
+        setCookie(res,_d.cookies);
+        if(_d.html){
+            result = JSON.parse(_d.html);
+        }
+        res.send({ success: true, data:result, lastParams:params });
+    })
+})
 
 // 下订单
 app.get('/otnConfirmPassengerConfirmSingleForQueue',function(req,res){
@@ -199,20 +259,20 @@ app.get('/otnConfirmPassengerConfirmSingleForQueue',function(req,res){
 
     var options = {
         hostname: 'kyfw.12306.cn',
-        path: '/otn/confirmPassenger/getQueueCount',
+        path: '/otn/confirmPassenger/confirmSingleForQueue',
         headers: {
             Cookie: ck + ';current_captcha_type=Z;_jc_save_wfdc_flag=dc;'
         },
         ca: [ca]
     };
-    var data = {
+    var data = {//O,0,1,李浩,1,410222199204053013,18655556615,N
         passengerTicketStr:seat.code + ',0,1,' + passengers.passenger_name + ',' + passengers.passenger_id_type_code + ',' + passengers.passenger_id_no + ',' + passengers.mobile_no + ',N',
-        oldPassengerStr:passengers.passenger_name + ',' + passengers.passenger_id_type_code + ',' + passengers.passenger_id_no + ',1_',
+        oldPassengerStr:passengers.passenger_name + ',' + passengers.passenger_id_type_code + ',' + passengers.passenger_id_no + ',1_',//李浩,1,410222199204053013,1_
         randCode:'',
         purpose_codes:'00',
-        key_check_isChange:params.key_check_isChange,
+        key_check_isChange:params.key_check_isChange,//65B9FFCCA80C5D0358C8D9E5108C623F1B2651980DC9A67CB46BA9FE
         leftTicketStr:params.data[12],
-        train_location:params.data[15],
+        train_location:params.data[15],//H3
         choose_seats:'',
         seatDetailType:'000',
         whatsSelect:1,

@@ -75,7 +75,6 @@ tbody td {
 }
 .qiang-msg {
 	position: absolute;
-	padding: 20px;
 	top: 0;
 	right: 0;
 	width: 400px;
@@ -84,11 +83,27 @@ tbody td {
 	background: rgba(42,42,42,0.8);
 	color: white;
 }
+.qiang-title {
+	padding: 20px;
+	color: #14f8aa
+}
 .start-go-btn {
 	position: absolute;
 	bottom: 10px;
 	left: 0;
 	width: 100%;
+	padding-left: 20px;
+	line-height: 34px;
+}
+.msg-text {
+	border-top: 1px solid white;
+	padding: 10px 20px 20px 20px;
+    height: 280px;
+    overflow: overlay;
+}
+.msg-text p {
+	margin-bottom: 6px;
+	font-size: 12px;
 }
 .btn-start {
 	float: right;
@@ -106,4 +121,23 @@ tbody td {
 }
 .close-btn:hover {
 	color: white;
+}
+.login-tcc {
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: 1px solid #ccc;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.3);
+}
+.login-tcc>div {
+	background: white;
+	border-radius: 4px;
+}
+.vertical-align-middle {
+	vertical-align: middle;
+}
+.search-num {
+	color: #9ad29a;
 }

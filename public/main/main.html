@@ -1,27 +1,34 @@
 <div ng-keydown="keyDown($event)">
 	<div class="condition">
-		<label class="text-right lbl" for='start-city'>出发城市</label><input ng-model='model.start_city' id='start-city' type="text" placeholder="出发地">
-		<label class="text-right lbl" for='end-city'>到达城市</label><input ng-model='model.end_city' id='end-city' type="text" placeholder="目的地">
-		<label class="text-right lbl" for='end-city'>出发日期</label><input ng-model='model.start_date' id='end-city' type="text" placeholder="出发日期">
+		<label class="text-right lbl" for='start-city'>出发城市</label><input ng-disabled="goPtimer.goP" ng-model='model.start_city' id='start-city' type="text" placeholder="出发地">
+		<label class="text-right lbl" for='end-city'>到达城市</label><input ng-disabled="goPtimer.goP" ng-model='model.end_city' id='end-city' type="text" placeholder="目的地">
+		<label class="text-right lbl" for='end-city'>出发日期</label><input ng-disabled="goPtimer.goP" ng-model='model.start_date' id='end-city' type="text" placeholder="出发日期">
 		<button class="btn btn-defult btn-mg" ng-click='search()' ng-bind="btnMg"></button>
 
-		<button class="btn btn-go" ng-click='goPtimer.goPshow=!goPtimer.goPshow' ng-bind="'抢票菜单'"></button>
+		<button class="btn btn-go" ng-click='showMenu()' ng-bind="'抢票菜单'"></button>
 	</div>
 	<div class="qiang-box" ng-show="goPtimer.goPshow">
 		<div>
 			<span ng-click='goPtimer.goPshow=false' class="glyphicon glyphicon-remove close-btn"></span>
 		</div>
 		<div class="qiang-msg">
-			<div>
-				<span>所选车次：</span>
-				<span>{{getCc().join('、')}}</span>
+			<div class="qiang-title">
+				<div>
+					<span>所选车次：</span>
+					<span>{{getCc().join('、')}}</span>
+				</div>
+				<div>
+					<span>所选席位：</span>
+					<span ng-repeat="seat in model.seat_types" ng-if="seat.status">{{seat.text+'、'}}</span>
+				</div>
 			</div>
-			<div>
-				<span>所选席位：</span>
-				<span ng-repeat="seat in model.seat_types" ng-if="seat.status">{{seat.text+'、'}}</span>
+			<div class="msg-text">
+				<p ng-repeat="msg in model.msg track by $index">{{msg}}</p>
 			</div>
 			<div class="start-go-btn clearfix">
-				<button class="btn btn-defult btn-start" ng-click="goSocket()">{{goPtimer.goP?'停止抢票':'开始抢票'}}</button>
+				查询次数：
+				<span class="vertical-align-middle search-num">{{model.num}}</span>
+				<button class="btn btn-defult btn-start vertical-align-middle" ng-click="goSocket()">{{goPtimer.goP?'停止抢票':'开始抢票'}}</button>
 			</div>
 		</div>
 	</div>
@@ -119,4 +126,34 @@
 			</tbody>
 		</table>
 	</div>
+
+
+	<!-- 登录弹出层 -->
+	<div class="login-tcc" ng-show="model.showLogin">
+		<div class="login">
+			<div>
+				<label class="login-lbl">账号 :</label><input type="text" placeholder="12306账号" ng-model='user.userName'>
+			</div>
+			<div>
+				<label class="login-lbl">密码 :</label><input type="password" placeholder="密码" ng-model='user.password'>
+			</div>
+			<div>
+				<label class="login-lbl">验证码 :</label>
+				<div class="code">
+					<img src="{{'/getImage?'+random}}">
+					<div class="img-click" ng-click='getCoordinate($event)'>
+						<span  ng-repeat="code in user.codeData" style="position:absolute;left:{{code.offsetX-10}}px;top:{{code.offsetY-10}}px;">
+							<span class="sign"></span>
+						</span>
+					</div>
+					<div class="renovate" ng-click='changeRandom()'></div>
+				</div>
+				<div class="clear-ft"></div>
+			</div>
+			<div>
+				<button class="btn btn-defult btn-login" ng-click='loginUp()'>登陆</button>
+			</div>
+		</div>
+	</div>
+	
 </div>
