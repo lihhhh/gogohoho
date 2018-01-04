@@ -260,10 +260,20 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
 
         return out;
     };
-
+    $scope.loginCount = 0;
     function otnUamauthclient(){
     	rcGetData.otnUamauthclient().then(function(_d){
     		console.log(_d);
+    		if(_d.data&&_d.data.result_code!=0){
+    			// 记录验证登陆失败次数
+    			$scope.loginCount++;
+    			if($scope.loginCount>5){
+    				$scope.loginCount = 0;
+    				$scope.model.showLogin = true;
+	    			alert('请重新登录。');
+    			}
+    			
+    		}
     	})
     }
 
@@ -280,37 +290,25 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
                 if (it == data[3]) {
                     for (var k in seat_types) {
                         if (seat_types[k].status && reg.test(data[seat_types[k].index]) && data[seat_types[k].index] != 0) {
-                            $scope.model.msg.push('发现余票：' + it + '&' + seat_types[k].text);
-                            // alert(data[seat_types[k].index]);
-                            // alert('123');
-                            // 首先验证登陆状态
-                            rcGetData.otnLoginCheckUser({
+                            addMsg('发现余票：' + it + '&' + seat_types[k].text);
+                            
+                            rcGetData.otnLeftTicketSubmitOrderRequest({
                                 cookies: document.cookie,
                                 data: data,
                                 seat: seat_types[k],
                                 passengers: getPassengers()[0],
                                 model: $scope.model
                             }).then(function(_d) {
-                                console.log(_d);
-                                if (_d && _d.data && _d.data.data.flag) {
-                                    //余票查询
-                                    return rcGetData.otnLeftTicketSubmitOrderRequest(_d.lastParams);
-                                } else {
-                                    $scope.model.showLogin = true;
-                                    $scope.model.msg.push('状态：发现用户未登录，尝试下订单。');
-                                    $interval.cancel($scope.goPtimer.timer);
-                                    $scope.goPtimer.goP = false;
-                                    alert('请重新登录。');
-                                    return rcGetData.otnLeftTicketSubmitOrderRequest(_d.lastParams);
-                                }
-                            }).then(function(_d) {
+                            	if(_d&&_d.data&&!_d.data.status&&_d.data.messages){
+                            		addMsg('状态：'+_d.data.messages.join(','));
+                            	}
                                 return rcGetData.otnConfirmPassengerInitDc(_d.lastParams);
                             }).then(function(_d) {
                                 return rcGetData.otnConfirmPassengerCheckOrderInfo(_d.lastParams);
                             }).then(function(_d) {
                                 console.log(_d);
                                 if (!_d.data.data.submitStatus) {
-                                    $scope.model.msg.push('状态：出票失败。');
+                                    addMsg('状态：出票失败。');
                                     // $scope.goSocket();
                                 } else {
                                     return rcGetData.otnConfirmPassengerGetQueueCount(_d.lastParams);
@@ -318,22 +316,22 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
                             }).then(function(_d) {
                                 console.log(_d);
                                 if (_d && _d.data && _d.data.data.ticket > _d.data.data.count) {
-                                    $scope.model.msg.push('当前余票：' + it + '&' + JSON.parse(_d.lastParams.seat).text + '&' + _d.data.data.ticket);
-                                    $scope.model.msg.push('下订单：' + it + '&' + JSON.parse(_d.lastParams.seat).text);
-                                    // $scope.model.msg.push('购票成功！请登录12306官网查看。');
+                                    addMsg('当前余票：' + it + '&' + JSON.parse(_d.lastParams.seat).text + '&' + _d.data.data.ticket);
+                                    addMsg('下订单：' + it + '&' + JSON.parse(_d.lastParams.seat).text);
+                                    // addMsg('购票成功！请登录12306官网查看。');
                                     // return {then:function(){}};
                                     return rcGetData.otnConfirmPassengerConfirmSingleForQueue(_d.lastParams);
                                 } else {
-                                    $scope.model.msg.push('余票不足');
+                                    addMsg('余票不足');
                                     // $scope.goSocket();
                                 }
                             }).then(function(_d) {
                                 console.log(_d);
                                 if (_d && _d.data && _d.data.data.submitStatus) {
-                                    $scope.model.msg.push('下单成功，等待出票结果。');
+                                    addMsg('下单成功，等待出票结果。');
                                     orderWaitTime(_d.lastParams);
                                 } else {
-                                    $scope.model.msg.push('状态：下单失败。');
+                                    addMsg('状态：下单失败。');
                                     // $scope.goSocket();
                                 }
                             })
@@ -347,22 +345,30 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
         })
     };
 
+
+    /*添加日志*/
+    function addMsg(msg){
+    	var date = new Date();
+    	msg='【'+date.toLocaleTimeString()+'】 '+msg;
+    	$scope.model.msg.push(msg);
+    }
+
     function orderWaitTime(lastParams) {
         rcGetData.otnConfirmPassengerQueryOrderWaitTime(lastParams).then(function(_d) {
             if (_d && _d.data && _d.data.data.waitTime == -1) {
                 alert('出票成功！请到12306官网查看未付款订单。');
-                $scope.model.msg.push('出票信息：' + _d.data.data.orderId);
+                addMsg('出票信息：' + _d.data.data.orderId);
                 $interval.cancel($scope.goPtimer.timer);
                 $scope.goPtimer.goP = false;
             } else if (_d && _d.data.data.waitTime == -2) {
-                $scope.model.msg.push('出票信息：' + _d.data.data.msg);
+                addMsg('出票信息：' + _d.data.data.msg);
             } else if (_d && _d.data.data.waitTime == -100) {
-                $scope.model.msg.push('状态：等待出票结果。');
+                addMsg('状态：等待出票结果。');
                 $timeout(function() {
                     orderWaitTime(lastParams);
                 }, 1200);
             } else {
-                $scope.model.msg.push('状态：出票失败，重新进入抢票模式。');
+                addMsg('状态：出票失败，重新进入抢票模式。');
                 // $scope.goSocket();
             }
         })

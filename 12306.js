@@ -42,7 +42,7 @@ io.on('connection', function(socket) {
         };
         var options = {
             hostname: 'kyfw.12306.cn',
-            path: '/otn/leftTicket/queryO',
+            path: '/otn/leftTicket/queryA',
             headers: {
                 Cookie: ck,
                 Referer: "https://kyfw.12306.cn/otn/leftTicket/init"
@@ -209,9 +209,12 @@ app.get('/otnUamauthclient',function(req,res){
     };
     getHttps(options,data).then(function(_d){
         console.log(_d.cookies);
-        setCookie(res,_d.cookies);
+        // setCookie(res,_d.cookies);
         if(_d.html){
             result = JSON.parse(_d.html);
+            if(result.newapptk){
+                res.cookie('tk',result.newapptk);
+            }
         }
         console.log(result);
         res.send({ success: true, data:result});
@@ -600,7 +603,7 @@ app.get('/getData', function(req, res) {
     };
     var options = {
         hostname: 'kyfw.12306.cn',
-        path: '/otn/leftTicket/queryO',
+        path: '/otn/leftTicket/queryA',
         headers: {
             Cookie: ck,
             Referer: "https://kyfw.12306.cn/otn/leftTicket/init"
