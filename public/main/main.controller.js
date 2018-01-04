@@ -110,6 +110,11 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
     $scope.isQiang = false;
     $scope.reg = new RegExp('([0-9]|有)+');
 
+    rcGetData.otnLeftTicketInit().then(function(){
+    	//查询
+    	$scope.search();
+    });
+
     function rcGetPassengers() {
         /*获取联系人信息*/
         rcGetData.getPassengers().then(function(_d) {
@@ -143,7 +148,7 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
             }
         });
     };
-    $scope.search();
+    
     /*复选框点击事件 点击对应的车次类型 下方车次信息出现抢或取消抢*/
     $scope.checkStatus = function(train_type) {
         train_type.status = !train_type.status;
@@ -350,10 +355,10 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
     function orderWaitTime(lastParams) {
         rcGetData.otnConfirmPassengerQueryOrderWaitTime(lastParams).then(function(_d) {
             if (_d && _d.data && _d.data.data.waitTime == -1) {
-                alert('出票成功！请到12306官网查看未付款订单。');
-                $scope.model.msg.push('出票信息：' + _d.data.data.orderId);
+            	$scope.model.msg.push('出票信息：' + _d.data.data.orderId);
                 $interval.cancel($scope.goPtimer.timer);
                 $scope.goPtimer.goP = false;
+                alert('出票成功！订单号：'+_d.data.data.orderId+'，请到12306官网查看未付款订单。');
             } else if (_d && _d.data.data.waitTime == -2) {
                 $scope.model.msg.push('出票信息：' + _d.data.data.msg);
             } else if (_d && _d.data.data.waitTime == -100) {

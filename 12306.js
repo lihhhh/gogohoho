@@ -42,7 +42,7 @@ io.on('connection', function(socket) {
         };
         var options = {
             hostname: 'kyfw.12306.cn',
-            path: '/otn/leftTicket/queryO',
+            path: cookies.ctx+cookies.CLeftTicketUrl,
             headers: {
                 Cookie: ck,
                 Referer: "https://kyfw.12306.cn/otn/leftTicket/init"
@@ -366,45 +366,45 @@ app.get('/otnConfirmPassengerCheckOrderInfo',function(req,res){
 
 /*获取REPEAT_SUBMIT_TOKEN*/
 app.get('/otnConfirmPassengerInitDc',function(req,res){
-        var ck = req.headers.cookie;
-        var params = req.query;
-        var model = JSON.parse(params.model);
-        var passengers = JSON.parse(params.passengers);
-        var seat = JSON.parse(params.seat);
-        var options = {
-            hostname: 'kyfw.12306.cn',
-            path: '/otn/confirmPassenger/initDc',
-            headers: {
-                Cookie: ck+';current_captcha_type=Z;_jc_save_wfdc_flag=dc;'
-            },
-            ca: [ca]
-        };
-        getHttps(options, {}).then(function(_d) {
-            // console.log(_d);
-            var result;
-            var reg = /CDATA\[\*\/([\s\S]*?)\/\*\]\]/gm;
-            var regIs = /key_check_isChange'.*?'(.*?)',/;
-            if (_d.html) {
-                var arr = reg.exec(_d.html);
-                var str = arr ? arr[1] : '';
-                var isCarr = regIs.exec(_d.html);
-                var key_check_isChange = isCarr ? isCarr[1] : '';
-                setCookie(res,_d.cookies);
-                if (str) {
-                    var spt = {};
-                    str = str.replace(/var /g, 'spt.');
-                    eval(str);
-                    // globalRepeatSubmitToken
-                    var REPEAT_SUBMIT_TOKEN = spt.globalRepeatSubmitToken;
-                    params.REPEAT_SUBMIT_TOKEN = REPEAT_SUBMIT_TOKEN;
-                    params.key_check_isChange = key_check_isChange;
-                    res.send({ success: true, lastParams:params });
-                }
-            } else {
-                // 检查登陆状态
+    var ck = req.headers.cookie;
+    var params = req.query;
+    var model = JSON.parse(params.model);
+    var passengers = JSON.parse(params.passengers);
+    var seat = JSON.parse(params.seat);
+    var options = {
+        hostname: 'kyfw.12306.cn',
+        path: '/otn/confirmPassenger/initDc',
+        headers: {
+            Cookie: ck+';current_captcha_type=Z;_jc_save_wfdc_flag=dc;'
+        },
+        ca: [ca]
+    };
+    getHttps(options, {}).then(function(_d) {
+        // console.log(_d);
+        var result;
+        var reg = /CDATA\[\*\/([\s\S]*?)\/\*\]\]/gm;
+        var regIs = /key_check_isChange'.*?'(.*?)',/;
+        if (_d.html) {
+            var arr = reg.exec(_d.html);
+            var str = arr ? arr[1] : '';
+            var isCarr = regIs.exec(_d.html);
+            var key_check_isChange = isCarr ? isCarr[1] : '';
+            setCookie(res,_d.cookies);
+            if (str) {
+                var spt = {};
+                str = str.replace(/var /g, 'spt.');
+                eval(str);
+                // globalRepeatSubmitToken
+                var REPEAT_SUBMIT_TOKEN = spt.globalRepeatSubmitToken;
+                params.REPEAT_SUBMIT_TOKEN = REPEAT_SUBMIT_TOKEN;
+                params.key_check_isChange = key_check_isChange;
+                res.send({ success: true, lastParams:params });
             }
-            // socket.emit('data', { success: true, data: result });
-        });
+        } else {
+            // 检查登陆状态
+        }
+        // socket.emit('data', { success: true, data: result });
+    });
 })
 
 /*余票验证验证*/
@@ -488,7 +488,6 @@ app.post('/passportWebAuthUamtk',function(req,res){
             res.send({ success: true, data: result });
         }
     })
-    
 })
 /*登录验证2*/
 app.post('/otnPassport',function(req,res){
@@ -534,6 +533,41 @@ app.post('/verificationUser', function(req, res) {
         res.send({ success: true, data: _d });
     });
 });
+/*获取购票查询接口*/
+app.get('/otnLeftTicketInit',function(req,res){
+    var ck = req.headers.cookie;
+    var options = {
+        hostname: 'kyfw.12306.cn',
+        path: '/otn/leftTicket/init',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': ck
+        },
+        ca: [ca]
+    };
+    var data = {
+        appid:'otn'
+    };
+    getHttps(options,data).then(function(_d){
+        // var result = JSON.parse(_d.html);
+        setCookie(res,_d.cookies);
+        var result;
+        var reg = /CDATA\[\*\/([\s\S]*?)\/\*\]\]/gm;
+        if(_d.html){
+            var arr = reg.exec(_d.html);
+            if(arr&&arr.length){
+                var str = arr[1];
+                var spt = {};
+                str = str.replace(/var /g, 'spt.');
+                eval(str);
+                for (var k in spt) {
+                    res.cookie(k, spt[k]);
+                }
+            }
+        }
+        res.send({ success: true, data: result });
+    })
+})
 /*获取联系人*/
 app.get('/getPassengers', function(req, res) {
     var ck = req.headers.cookie;
@@ -564,8 +598,9 @@ app.get('/getPassengers', function(req, res) {
 /*获取验证码*/
 app.get('/getImage', function(req, res) {
     // res.writeHead(200, { "Content-type": 'image/jpeg' });
-    var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
-    ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
+    var ck = req.headers.cookie;
+    // var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
+    // ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
     var data = {
         module: 'login',
         rand: 'sjrand',
@@ -582,15 +617,16 @@ app.get('/getImage', function(req, res) {
         //rejectUnauthorized: false  // 忽略安全警告
     };
     getHttps(options, data, 'binary').then(function(_d) {
-        setCookie(res, _d.cookies, ['_passport_ct', '_passport_session'])
+        setCookie(res,_d.cookies);
         res.end(_d.html, 'binary');
     });
 });
 /*获取车次信息*/
 app.get('/getData', function(req, res) {
     var data = req.query;
-    var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
-    ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
+    var ck = req.headers.cookie;
+    // var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
+    // ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
     // ck += ';' + cookie.serialize('tk', req.cookies.newapptk);
     var data = {
         "leftTicketDTO.train_date": data.start_date,
@@ -600,7 +636,7 @@ app.get('/getData', function(req, res) {
     };
     var options = {
         hostname: 'kyfw.12306.cn',
-        path: '/otn/leftTicket/queryO',
+        path: req.cookies.ctx+req.cookies.CLeftTicketUrl,
         headers: {
             Cookie: ck,
             Referer: "https://kyfw.12306.cn/otn/leftTicket/init"
@@ -610,8 +646,10 @@ app.get('/getData', function(req, res) {
     console.log('请求车次信息,等待12306返回数据');;
     getHttps(options, data).then(function(_d) {
         // console.log(_d);
+        setCookie(res,_d.cookies);
         var result;
         if (_d.html) {
+            _d.html = _d.html.replace(/[\s\r\n\t]/gm,'');
             result = JSON.parse(_d.html);
         }
         if (result && result.data && result.data.result) {
