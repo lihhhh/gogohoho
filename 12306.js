@@ -209,9 +209,12 @@ app.get('/otnUamauthclient',function(req,res){
     };
     getHttps(options,data).then(function(_d){
         console.log(_d.cookies);
-        setCookie(res,_d.cookies);
+        // setCookie(res,_d.cookies);
         if(_d.html){
             result = JSON.parse(_d.html);
+            if(result.newapptk){
+                res.cookie('tk',result.newapptk);
+            }
         }
         console.log(result);
         res.send({ success: true, data:result});
@@ -623,15 +626,15 @@ app.get('/getImage', function(req, res) {
 });
 /*获取车次信息*/
 app.get('/getData', function(req, res) {
-    var data = req.query;
+    var params = req.query;
     var ck = req.headers.cookie;
     // var ck = cookie.serialize('JSESSIONID', req.cookies.JSESSIONID);
     // ck += ';' + cookie.serialize('BIGipServerotn', req.cookies.BIGipServerotn);
     // ck += ';' + cookie.serialize('tk', req.cookies.newapptk);
     var data = {
-        "leftTicketDTO.train_date": data.start_date,
-        "leftTicketDTO.from_station": config.city[data.start_city],
-        "leftTicketDTO.to_station": config.city[data.end_city],
+        "leftTicketDTO.train_date": params.start_date,
+        "leftTicketDTO.from_station": config.city[params.start_city],
+        "leftTicketDTO.to_station": config.city[params.end_city],
         "purpose_codes": "ADULT"
     };
     var options = {
@@ -647,6 +650,9 @@ app.get('/getData', function(req, res) {
     getHttps(options, data).then(function(_d) {
         // console.log(_d);
         setCookie(res,_d.cookies);
+        // res.cookie('start_date',params.start_date);
+        // res.cookie('start_city',params.start_city);
+        // res.cookie('end_city',params.end_city);
         var result;
         if (_d.html) {
             _d.html = _d.html.replace(/[\s\r\n\t]/gm,'');

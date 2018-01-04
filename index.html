@@ -3,6 +3,7 @@
 <head>
 	<title>12306</title>
 	<link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+	<link href="common/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
 	<link rel="stylesheet" type="text/css" href="login/login.css">
 	<link rel="stylesheet" type="text/css" href="main/main.css">
 	<style type="text/css">
@@ -20,18 +21,27 @@
 		<div class="clearfix use-title">
 			<div class="pull-right">
 				<span>你好</span>
-				<span>{{userData.user_name}}</span>
+				<span>{{userData.username}}</span>
 				<span>|</span>
 				<span>退出</span>
 			</div>
 		</div>
 		<div ng-view></div>
 	</div>
+
 	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="common/datetimepicker/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="common/datetimepicker/js/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="common/datetimepicker/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+	<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+    <script type="text/javascript" src="common/area/js/lazyload-min.js"></script>
 	<script src="global/script/socket.io.js"></script>
 	<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
 	<script src="https://apps.bdimg.com/libs/angular-route/1.3.13/angular-route.js"></script>
 	<script src="/app.js"></script>
+	<script src="common/directive/cs.cookie.directive.js"></script>
 	<script src="/eventbus.factory.js"></script>
 	<script src="/login.yz.service.js"></script>
 	<script src="/login/login.directive.js"></script>

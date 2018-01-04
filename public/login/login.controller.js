@@ -23,7 +23,7 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLo
 						$scope.user.codeData=[];
 						$scope.user.code='';
 						eventbus.broadcast('login.ok',{status:true});
-						window.location.href='http://127.0.0.1:9000/#/main';
+						window.location.href='/#/main';
 					});
 				}else{
 					$scope.random=Math.random()*1;

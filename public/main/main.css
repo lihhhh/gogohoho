@@ -32,6 +32,9 @@ tbody td {
 	margin:30px auto 0 auto;
 	width:1140px;
 }
+.condition input {
+	cursor: text;
+}
 .btn-mg {
 	height: 34px;
 	width: 73px;
@@ -78,7 +81,7 @@ tbody td {
 	top: 0;
 	right: 0;
 	width: 400px;
-	height: 400px;
+	height: 600px;
 	border-radius: 8px;
 	background: rgba(42,42,42,0.8);
 	color: white;
@@ -98,7 +101,7 @@ tbody td {
 .msg-text {
 	border-top: 1px solid white;
 	padding: 10px 20px 20px 20px;
-    height: 280px;
+    height: 480px;
     overflow: overlay;
 }
 .msg-text p {
@@ -140,4 +143,5 @@ tbody td {
 }
 .search-num {
 	color: #9ad29a;
+	font-size: 17px;
 }
