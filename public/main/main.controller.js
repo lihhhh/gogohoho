@@ -125,7 +125,7 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
     $scope.isIndex = true;
     $scope.isQiang = false;
     $scope.reg = new RegExp('([0-9]|有)+');
-
+    eventbus.broadcast('login.ok',{status:true});
     rcGetData.otnLeftTicketInit().then(function(){
     	//查询
     	$scope.search();

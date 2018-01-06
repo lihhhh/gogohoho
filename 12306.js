@@ -17,18 +17,18 @@ var ca = fs.readFileSync(__dirname + '/srca.cer.pem');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 io.on('error', function(exc) {
-    console.log("ignoring exception: 1111111111" + exc);
+    //console.log("ignoring exception: 1111111111" + exc);
 });
 io.on('connection', function(socket) {
     socket.on('error', function(exc) {
-        console.log("ignoring exception: 1111111111" + exc);
+        //console.log("ignoring exception: 1111111111" + exc);
     });
     socket.on('goP', function(obj) {
         // /otn/leftTicket/submitOrderRequest
         
     })
     socket.on('msg', function(obj) {
-        console.log('收到抢票请求');
+        //console.log('收到抢票请求');
         var data = obj.model;
         var cookies = cookie.parse(obj.cookies);
         var ck = cookie.serialize('JSESSIONID', cookies.JSESSIONID);
@@ -49,9 +49,9 @@ io.on('connection', function(socket) {
             },
             ca: [ca]
         };
-        console.log('请求车次信息,等待12306返回数据');;
+        //console.log('请求车次信息,等待12306返回数据');;
         getHttps(options, data).then(function(_d) {
-            // console.log(_d);
+            // //console.log(_d);
             var result;
             if (_d.html) {
                 result = JSON.parse(_d.html);
@@ -104,7 +104,7 @@ function getHttps(options, data, encode) {
                 return resolve({ html: html, cookies: res.headers['set-cookie'] });
             });
             res.on('error', function(err) {
-                console.log(err);
+                //console.log(err);
             });
         });
     });
@@ -119,12 +119,12 @@ function httpReq(options, data) {
                 chunks.push(a);
             })
             res.on('end', function() {
-                //console.log(Buffer.concat(chunks).toString());
+                ////console.log(Buffer.concat(chunks).toString());
                 resolve(Buffer.concat(chunks).toString());
             })
         });
         req.on('error', function(err) {
-            console.log(err);
+            //console.log(err);
         })
         req.write(JSON.stringify(data));
         req.end();
@@ -134,7 +134,7 @@ function httpReq(options, data) {
 
 /*首页*/
 app.get('/', function(req, res) {
-    console.log('等待12306返回数据...');
+    //console.log('等待12306返回数据...');
     if (req.cookies.JSESSIONID) {
         res.sendfile('index.html');
     } else {
@@ -144,7 +144,7 @@ app.get('/', function(req, res) {
                 html += chunk;
             });
             ress.on('end', function() {
-                console.log('成功接收数据');
+                //console.log('成功接收数据');
                 setCookie(res,ress.headers['set-cookie']);
                 res.sendfile('index.html');
             });
@@ -178,7 +178,7 @@ app.get('/loginUp', function(req, res) {
     };
     getHttps(options, data).then(function(_d) {
         var result = JSON.parse(_d.html);
-        console.log(result);
+        //console.log(result);
         setCookie(res,_d.cookies);
         /*返回验证码验证结果*/
         res.send({ success: true, msg: result });
@@ -208,7 +208,7 @@ app.get('/otnUamauthclient',function(req,res){
         tk:cookie.parse(ck).tk
     };
     getHttps(options,data).then(function(_d){
-        console.log(_d.cookies);
+        //console.log(_d.cookies);
         // setCookie(res,_d.cookies);
         if(_d.html){
             result = JSON.parse(_d.html);
@@ -216,7 +216,7 @@ app.get('/otnUamauthclient',function(req,res){
                 res.cookie('tk',result.newapptk);
             }
         }
-        console.log(result);
+        //console.log(result);
         res.send({ success: true, data:result});
     })
 })
@@ -383,7 +383,7 @@ app.get('/otnConfirmPassengerInitDc',function(req,res){
         ca: [ca]
     };
     getHttps(options, {}).then(function(_d) {
-        // console.log(_d);
+        // //console.log(_d);
         var result;
         var reg = /CDATA\[\*\/([\s\S]*?)\/\*\]\]/gm;
         var regIs = /key_check_isChange'.*?'(.*?)',/;
@@ -461,7 +461,7 @@ app.get('/otnLoginCheckUser',function(req,res){
         _json_att:''
     };
     getHttps(options, data).then(function(_d) {
-        console.log(_d);
+        //console.log(_d);
         setCookie(res,_d.cookies);
         var result = _d.html?JSON.parse(_d.html):_d.html;
         res.send({ success: true, data: result ,lastParams:params});
@@ -646,9 +646,9 @@ app.get('/getData', function(req, res) {
         },
         ca: [ca]
     };
-    console.log('请求车次信息,等待12306返回数据');;
+    //console.log('请求车次信息,等待12306返回数据');;
     getHttps(options, data).then(function(_d) {
-        // console.log(_d);
+        // //console.log(_d);
         setCookie(res,_d.cookies);
         // res.cookie('start_date',params.start_date);
         // res.cookie('start_city',params.start_city);
@@ -696,16 +696,16 @@ app.get('/sfyz', function(req, res) {
         ca: [ca]
     };
     httpReq(options, data).then(function(_d) {
-        console.log(_d);
+        //console.log(_d);
         var result;
         var reg = /<script xml:space="preserve">([\s\S]*?)</gm;
         result = reg.exec(_d);
         result = result ? result[1] : '';
-        console.log(result);
+        //console.log(result);
         var out = {};
         result = result.replace(/var /g, 'out.');
         eval(result);
-        console.log(out);
+        //console.log(out);
 
         res.send({ success: true, data: out });
     });
