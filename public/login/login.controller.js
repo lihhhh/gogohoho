@@ -34,6 +34,10 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLo
 			
 		});
 	};
+
+	$scope.goMain = function(){
+		window.location.href='/#/main';
+	};
 	$scope.getCoordinate=function(event){
 		console.log(event);
 		if($scope.user.code){

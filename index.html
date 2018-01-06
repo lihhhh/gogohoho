@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>12306</title>
+	<link href="assets/favicon.ico" rel="shortcut icon">
 	<link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 	<link href="common/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
 	<link rel="stylesheet" type="text/css" href="login/login.css">
@@ -21,7 +22,7 @@
 		<div class="clearfix use-title">
 			<div class="pull-right">
 				<span>你好</span>
-				<span>{{userData.username}}</span>
+				<span ng-bind="userData.username"></span>
 				<span>|</span>
 				<span>退出</span>
 			</div>
