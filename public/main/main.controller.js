@@ -29,49 +29,49 @@ myapp.controller('reMain', ['$scope', "rcGetData", "$interval", "$timeout", "rcL
         seat_types: {
             swz_num: {
                 text: '商务座',
-                status: false,
+                status: true,
                 index: 32,
                 code: '9'
             },
             zy_num: {
                 text: '一等座',
-                status: false,
+                status: true,
                 index: 31,
                 code: 'M'
             },
             ze_num: {
                 text: '二等座',
-                status: false,
+                status: true,
                 index: 30,
                 code: 'O'
             },
             rw_num: {
                 text: '软卧',
-                status: false,
+                status: true,
                 index: 23,
                 code: '4'
             },
             yw_num: {
                 text: '硬卧',
-                status: false,
+                status: true,
                 index: 28,
                 code: '3'
             },
             rz_num: {
                 text: '软座',
-                status: false,
+                status: true,
                 // index:32,
                 code: '2'
             },
             yz_num: {
                 text: '硬座',
-                status: false,
+                status: true,
                 index: 29,
                 code: '1'
             },
             wz_num: {
                 text: '无座',
-                status: false,
+                status: true,
                 index: 26,
                 code: '1'
             }

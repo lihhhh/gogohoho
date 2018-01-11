@@ -1,11 +1,14 @@
 var mongoose=require('mongoose');
 
-var db = mongoose.createConnection('localhost','12306');
+var db = mongoose.createConnection('47.97.161.209','12306');
 var dbData=db.model('users',{
 	JSESSIONID:String,
 	BIGipServerotn:String,
 	userName:String,
 	password:String,
+	name:String,
+	ip:String,
+	loginDate:Date,
 	start_city:String,
 	start_date:String,
 	end_city:String,

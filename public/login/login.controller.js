@@ -16,14 +16,22 @@ myapp.controller('rcLogin',['$scope',"rcLoginUp","eventbus",function($scope,rcLo
 			if(_d.success){
 				if(_d.msg.result_code==4){
 					rcLoginUp.verificationUser($scope.user).then(function(_d){
-						return rcLoginUp.otnPassport();
+						return rcLoginUp.otnPassport($scope.user);
 					}).then(function(){
-						return rcLoginUp.passportWebAuthUamtk();
-					}).then(function(){
-						$scope.user.codeData=[];
-						$scope.user.code='';
-						eventbus.broadcast('login.ok',{status:true});
-						window.location.href='/#/main';
+						return rcLoginUp.passportWebAuthUamtk($scope.user);
+					}).then(function(___d){
+						if(___d.success){
+							$scope.user.codeData=[];
+							$scope.user.code='';
+							eventbus.broadcast('login.ok',{status:true});
+							window.location.href='/#/main';
+						}else{
+							alert('账号或密码错误！');
+							$scope.random=Math.random()*1;
+							$scope.user.code='';
+							$scope.user.codeData=[];
+						}
+						
 					});
 				}else{
 					$scope.random=Math.random()*1;
